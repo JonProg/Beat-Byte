@@ -8,11 +8,10 @@ music_names = os.listdir(PATH)
 
 controls = """
       ,- -,
-      | W |
+      | ↑ | --Up
      ',- -',
-      | S |
+      | ↓ | --Down
       '- -'
-
 
 """
 
@@ -50,7 +49,7 @@ def main(stdscr):
         for name in music_names:
             pad_music.addstr(name)
         
-        #pad.refresh(0,0,5,5,25,25)
+        #pad_music.refresh(0,0,5,5,25,25)
 
         # Verifique se a tecla 'q' foi pressionada para sair
         key = stdscr.getch()
