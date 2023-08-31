@@ -6,6 +6,16 @@ import pygame
 PATH = 'musicas'
 music_names = os.listdir(PATH)
 
+controls = """
+      ,- -,
+      | W |
+     ',- -',
+      | S |
+      '- -'
+
+
+"""
+
 def main(stdscr):
     # Configuração inicial do curses
     curses.curs_set(0)
