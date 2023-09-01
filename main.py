@@ -15,13 +15,34 @@ controls = """
 
 """
 
+def player_music(selected):
+    btn_1 = curses.KEY_UP
+    btn_2 = curses.KEY_DOWN
+
+    if selected:
+        btn_1 = curses.KEY_LEFT
+        btn_2 = curses.KEY_RIGHT
+
+    key = stdscr.getch()
+
+    if key == 113:
+        break
+
+    elif key == curses.btn_1 and current_music_idx > 0:
+        current_music_idx -= 1
+    
+    elif key == curses.btn_2 and current_music_idx < len(music_names)-1:
+        current_music_idx += 1
+
+
 def select_music(stdscr, selected_idx):
     stdscr.clear()
-    stdscr.addstr(5,10, controls)
+    stdscr.addstr(15,14 , controls)
+    stdscr.addstr(17,75 , "Selecione a Música:", curses.A_BOLD)
     win_y, win_x = stdscr.getmaxyx()
 
-    pad_width = 75
-    pad_height = 50
+    pad_width = 40
+    pad_height = 15
 
     pad_x = (win_x // 2) - (pad_width // 2)
     pad_y = (win_y // 2) - (pad_height // 2)
@@ -55,6 +76,7 @@ def main(stdscr):
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
     current_music_idx = 0
+    select_music(stdscr, current_music_idx)
 
     # Carregue a música
     #pygame.mixer.music.load(r'musicas\bryson tiller - dont (sped up).mp3')
@@ -62,10 +84,8 @@ def main(stdscr):
     # Reproduza a música
     #pygame.mixer.music.play()
 
-    select_music(stdscr, current_music_idx)
 
     # Exiba o player de música estilizado
-    #stdscr.addstr(height // 2, (width - 10) // 2, "Selecione a Música", curses.A_BOLD)
     #stdscr.addstr(height // 2 + 10, (width - 10) // 2, "Pressione 'q' para sair", curses.A_DIM)
 
     # Verifique se a tecla 'q' foi pressionada para sair
@@ -75,7 +95,7 @@ def main(stdscr):
         if key == 113:
             break
 
-        if key == curses.KEY_UP and current_music_idx > 0:
+        elif key == curses.KEY_UP and current_music_idx > 0:
             current_music_idx -= 1
         
         elif key == curses.KEY_DOWN and current_music_idx < len(music_names)-1:
