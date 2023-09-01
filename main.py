@@ -6,38 +6,33 @@ import pygame
 PATH = 'musicas'
 music_names = os.listdir(PATH)
 
-controls = """
-      ,- -,
-      | ↑ | --Up
-     ',- -',
-      | ↓ | --Down
-      '- -'
+controls_select = """
+      ,-----,
+      |  ↑  | --Up
+      '-----'
+         |
+      ,-----,
+      |  ↓  | --Down
+      '-----'
 
 """
 
-def player_music(selected):
-    btn_1 = curses.KEY_UP
-    btn_2 = curses.KEY_DOWN
+controls_player = """
 
-    if selected:
-        btn_1 = curses.KEY_LEFT
-        btn_2 = curses.KEY_RIGHT
+,-----,   ,-----,
+| ←-- |---| --→ |
+'-----'   '-----'
+ left     right
+"""
+# Inicializar o Pygame
+pygame.init()
 
-    key = stdscr.getch()
-
-    if key == 113:
-        break
-
-    elif key == curses.btn_1 and current_music_idx > 0:
-        current_music_idx -= 1
-    
-    elif key == curses.btn_2 and current_music_idx < len(music_names)-1:
-        current_music_idx += 1
-
+# Inicializar o mixer
+pygame.mixer.init()
 
 def select_music(stdscr, selected_idx):
     stdscr.clear()
-    stdscr.addstr(15,14 , controls)
+    stdscr.addstr(15,14 , controls_select)
     stdscr.addstr(17,75 , "Selecione a Música:", curses.A_BOLD)
     win_y, win_x = stdscr.getmaxyx()
 
@@ -66,10 +61,10 @@ def select_music(stdscr, selected_idx):
     
     stdscr.refresh()
     pad.refresh(0, 0, pad_y, pad_x, pad_y + pad_height, pad_x + pad_width)
-    
+
+
+
 def main(stdscr):
-    # Inicialização do mixer do pygame
-    #pygame.mixer.init()
     curses.initscr()
     curses.curs_set(0)
     
@@ -78,41 +73,35 @@ def main(stdscr):
     current_music_idx = 0
     select_music(stdscr, current_music_idx)
 
-    # Carregue a música
-    #pygame.mixer.music.load(r'musicas\bryson tiller - dont (sped up).mp3')
-
-    # Reproduza a música
-    #pygame.mixer.music.play()
-
-
     # Exiba o player de música estilizado
     #stdscr.addstr(height // 2 + 10, (width - 10) // 2, "Pressione 'q' para sair", curses.A_DIM)
 
     # Verifique se a tecla 'q' foi pressionada para sair
+
     while True:
         key = stdscr.getch()
 
         if key == 113:
+            # Pare a música e encerre o mixer do pygame
+            pygame.mixer.music.stop()
+            pygame.mixer.quit()
             break
 
         elif key == curses.KEY_UP and current_music_idx > 0:
             current_music_idx -= 1
-        
+
         elif key == curses.KEY_DOWN and current_music_idx < len(music_names)-1:
             current_music_idx += 1
-        
-        elif key == curses.KEY_ENTER or key in [10,13]:
+
+        elif key == curses.KEY_ENTER or key in [10,13]:                   
             stdscr.clear()
             stdscr.addstr(0,0, "You pressed {}".format(music_names[current_music_idx]))
+            pygame.mixer.music.load(PATH +'/{}'.format(music_names[current_music_idx]))
+            pygame.mixer.music.play()
             stdscr.refresh()
-            stdscr.getch()
+            continue
 
         select_music(stdscr, current_music_idx)
-        
-
-    # Pare a música e encerre o mixer do pygame
-    #pygame.mixer.music.stop()
-    #pygame.mixer.quit()
 
 # Execute o programa
 wrapper(main)
