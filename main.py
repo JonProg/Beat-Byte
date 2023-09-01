@@ -69,6 +69,7 @@ def main(stdscr):
     curses.curs_set(0)
     
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
+    height, width = stdscr.getmaxyx()
 
     current_music_idx = 0
     select_music(stdscr, current_music_idx)
@@ -94,12 +95,26 @@ def main(stdscr):
             current_music_idx += 1
 
         elif key == curses.KEY_ENTER or key in [10,13]:                   
-            stdscr.clear()
-            stdscr.addstr(0,0, "You pressed {}".format(music_names[current_music_idx]))
-            pygame.mixer.music.load(PATH +'/{}'.format(music_names[current_music_idx]))
-            pygame.mixer.music.play()
-            stdscr.refresh()
-            continue
+
+            while True:
+                stdscr.clear()
+                stdscr.addstr(0,0, "Tocando {}".format(music_names[current_music_idx]))
+                pygame.mixer.music.load(PATH +'/{}'.format(music_names[current_music_idx]))
+                pygame.mixer.music.play()
+
+                key = stdscr.getch()
+
+                if key == 113:
+                    # Pare a música e encerre o mixer do pygame
+                    break
+
+                elif key == curses.KEY_LEFT and current_music_idx > 0:
+                    current_music_idx -= 1
+
+                elif key == curses.KEY_RIGHT and current_music_idx < len(music_names)-1:
+                    current_music_idx += 1
+                
+                stdscr.refresh()
 
         select_music(stdscr, current_music_idx)
 
