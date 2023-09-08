@@ -3,11 +3,15 @@ import pygame
 import os
 
 from pyfiglet import figlet_format
+from time import sleep
 from curses import wrapper
 
 
 PATH = 'musicas'
 music_names = os.listdir(PATH)
+
+#Colocar para passar automaticamente
+#Talvez colocar a função de pausar e despausar
 
 title = figlet_format("Beat-Byte", font = "big")
 
@@ -105,6 +109,7 @@ def main(stdscr):
 
             while True:
                 stdscr.clear()
+                music_time = None
                 name_music = music_names[current_music_idx].replace('.mp3', '')
                 if len(music_names[current_music_idx])>30:
                     name_music = music_names[current_music_idx][0:30]+'...'
@@ -115,7 +120,9 @@ def main(stdscr):
                 try:
                     pygame.mixer.music.load(PATH +'/{}'.format(music_names[current_music_idx]))
                     pygame.mixer.music.play()
+                    music_time = pygame.mixer.music.get_length()
                     valid = True
+
                 except pygame.error:
                     stdscr.addstr(height // 2  - 5, (width - 60) // 2 , "Arquivo MP3 corronpido (-_-*). Volte e coloque outra música")
                     valid = False
@@ -138,6 +145,13 @@ def main(stdscr):
 
                 elif key == curses.KEY_RIGHT and current_music_idx < len(music_names)-1:
                     current_music_idx += 1
+                
+                sleep(music_time)
+
+                if current_music_idx < len(music_names)-1:
+                    current_music_idx += 1
+                
+
                 
         select_music(stdscr, current_music_idx, pad)
 
