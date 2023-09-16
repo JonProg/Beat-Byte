@@ -1,9 +1,9 @@
 import curses
+import pygame.event
 import pygame
 import os
 
 from pyfiglet import figlet_format
-from time import sleep
 from curses import wrapper
 
 
@@ -106,10 +106,8 @@ def main(stdscr):
             current_music_idx += 1
 
         elif key == curses.KEY_ENTER or key in [10,13]:                   
-
             while True:
                 stdscr.clear()
-                music_time = None
                 name_music = music_names[current_music_idx].replace('.mp3', '')
                 if len(music_names[current_music_idx])>30:
                     name_music = music_names[current_music_idx][0:30]+'...'
@@ -120,7 +118,7 @@ def main(stdscr):
                 try:
                     pygame.mixer.music.load(PATH +'/{}'.format(music_names[current_music_idx]))
                     pygame.mixer.music.play()
-                    music_time = pygame.mixer.music.get_length()
+                    pygame.mixer.music.set_endevent(pygame.USEREVENT)
                     valid = True
 
                 except pygame.error:
@@ -134,25 +132,31 @@ def main(stdscr):
                 stdscr.addstr(height // 2 + 5, (width - 40) // 2 + 5, "Aperte 'Q' para voltar", curses.A_BOLD)
 
                 stdscr.refresh()
-                key = stdscr.getch()
 
+                key = stdscr.getch()
                 if key in [113, 81]:
                     # Pare a música e encerre o mixer do pygame
                     break
 
-                elif key == curses.KEY_LEFT and current_music_idx > 0:
-                    current_music_idx -= 1
+                while True:
+                    time_music = False
+                    for event in pygame.event.get():
+                        if event.type == pygame.USEREVENT:
+                            if current_music_idx < len(music_names) - 1:
+                                current_music_idx += 1
+                                time_music = True
 
-                elif key == curses.KEY_RIGHT and current_music_idx < len(music_names)-1:
-                    current_music_idx += 1
-                
-                sleep(music_time)
+                    if time_music:
+                        break
 
-                if current_music_idx < len(music_names)-1:
-                    current_music_idx += 1
-                
+                    elif key == curses.KEY_LEFT and current_music_idx > 0:
+                        current_music_idx -= 1
+                        break
 
-                
+                    elif key == curses.KEY_RIGHT and current_music_idx < len(music_names)-1:
+                        current_music_idx += 1
+                        break
+
         select_music(stdscr, current_music_idx, pad)
 
 # Execute o programa
