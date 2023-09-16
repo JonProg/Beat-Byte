@@ -9,8 +9,6 @@ from curses import wrapper
 PATH = 'musicas'
 music_names = os.listdir(PATH)
 
-#Colocar para passar automaticamente
-#Talvez colocar a função de pausar e despausar
 
 title = figlet_format("Beat-Byte", font = "big")
 
