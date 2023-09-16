@@ -1,5 +1,4 @@
 import curses
-import pygame.event
 import pygame
 import os
 
@@ -76,9 +75,6 @@ def select_music(stdscr, selected_idx, pad):
     stdscr.refresh()
     pad.refresh(0, 0, pad_y, pad_x, pad_y + pad_height, pad_x + pad_width)
 
-
-
-
 def main(stdscr):
     curses.initscr()
     curses.curs_set(0)
@@ -102,7 +98,7 @@ def main(stdscr):
         elif key == curses.KEY_UP and current_music_idx > 0:
             current_music_idx -= 1
 
-        elif key == curses.KEY_DOWN and current_music_idx < len(music_names):
+        elif key == curses.KEY_DOWN and current_music_idx < len(music_names) -1:
             current_music_idx += 1
 
         elif key == curses.KEY_ENTER or key in [10,13]:                   
@@ -113,12 +109,14 @@ def main(stdscr):
                     name_music = music_names[current_music_idx][0:30]+'...'
 
                 height, width = stdscr.getmaxyx()
-                valid = False
 
                 try:
                     pygame.mixer.music.load(PATH +'/{}'.format(music_names[current_music_idx]))
                     pygame.mixer.music.play()
-                    pygame.mixer.music.set_endevent(pygame.USEREVENT)
+
+                    if current_music_idx < len(music_names) - 1:
+                        pygame.mixer.music.queue(PATH +'/{}'.format(music_names[current_music_idx + 1]))
+
                     valid = True
 
                 except pygame.error:
@@ -134,29 +132,17 @@ def main(stdscr):
                 stdscr.refresh()
 
                 key = stdscr.getch()
+
                 if key in [113, 81]:
                     # Pare a música e encerre o mixer do pygame
                     break
 
-                while True:
-                    time_music = False
-                    for event in pygame.event.get():
-                        if event.type == pygame.USEREVENT:
-                            if current_music_idx < len(music_names) - 1:
-                                current_music_idx += 1
-                                time_music = True
+                elif key == curses.KEY_LEFT and current_music_idx > 0:
+                    current_music_idx -= 1
 
-                    if time_music:
-                        break
-
-                    elif key == curses.KEY_LEFT and current_music_idx > 0:
-                        current_music_idx -= 1
-                        break
-
-                    elif key == curses.KEY_RIGHT and current_music_idx < len(music_names)-1:
-                        current_music_idx += 1
-                        break
-
+                elif key == curses.KEY_RIGHT and current_music_idx < len(music_names)-1:
+                    current_music_idx += 1
+                
         select_music(stdscr, current_music_idx, pad)
 
 # Execute o programa
