@@ -46,8 +46,6 @@ def select_music(stdscr, selected_idx, pad):
     pad_x = (win_x // 2) - (pad_width // 2) 
     pad_y = (win_y // 2) - (pad_height // 2) + 3
 
-    max_h, max_w = pad.getmaxyx()
-
     if music_names == []:
         stdscr.addstr(win_y // 2 - 8, win_x // 2 - 10, "Nenhuma música encontrada", curses.A_BOLD)
         return pad.refresh(0, 0, pad_y, pad_x, pad_y + pad_height, pad_x + pad_width)
